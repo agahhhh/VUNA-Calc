@@ -501,13 +501,85 @@ function copyResult() {
     .catch(() => alert('Failed to copy'));
 }
 
-function percentToResult() {
-    const num = parseFloat(currentExpression);
-    if (!isNaN(num) && currentExpression.trim() === num.toString()) {
-        currentExpression = (num / 100).toString();
-        updateResult();
-    }
+
+function startVoiceInput() {
+    clearResult()
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Speech recognition not supported in this browser.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+
+  recognition.onresult = (event) => {
+    const spokenText = event.results[0][0].transcript;
+    handleSpokenMath(spokenText);
+  };
+
+  recognition.start();
 }
-  
 
 
+function handleSpokenMath(text) {
+  const tokens = normalizeSpeech(text);
+
+  tokens.forEach(token => {
+    if (["+","-","*","x","/"].includes(token)) {
+      operatorToResult(token);
+    
+    } else {
+      appendToResult(token);
+    }
+  });
+}
+
+
+function normalizeSpeech(text) {
+  let normalized = text.toLowerCase();
+
+  const replacements = {
+  "multiplied by": "*",
+  "divided by": "/",
+  "times": "*",
+  "x": "*",
+  "multiply": "*",
+  "plus": "+",
+  "add": "+",
+  "minus": "-",
+  "subtract": "-"
+};
+
+
+  for (let key in replacements) {
+    normalized = normalized.replaceAll(key, replacements[key]);
+  }
+
+  const numbers = {
+    "zero": "0",
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9"
+  };
+
+  for (let word in numbers) {
+    normalized = normalized.replaceAll(word, numbers[word]);
+  }
+
+  normalized = normalized.replace(/([\+\-\*\/])/g, ' $1 ');
+
+  // Split into tokens
+  return normalized
+    .split(" ")
+    .filter(t => t.trim() !== "");
+}

@@ -255,7 +255,7 @@
   </button>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-lg-4 col-md-6 col-sm-8">
+      <div class="col-lg-6 col-md-6 col-sm-8">
         <div class="border border-dotted border-3 rounded-3 p-3 mb-4 bg-white bg-opacity-50">
           <h4 class="text-center group-header mb-0">VUNA CALCULATOR</h4>
           <p class="text-center text-small text-muted">
@@ -328,7 +328,10 @@
                 <button class="btn btn-action" onclick="applyLogarithm()">
                     log
                   </button>
-                <button class="btn btn-equals" onclick="calculateResult()" style="grid-column: span 2;">=</button>
+                <button id="voice-input-btn" class="btn btn-special" aria-label="Speak calculation input" onclick="startVoiceInput()">
+                🎙️
+              </button>
+                <button class="btn btn-equals" onclick="calculateResult()" stylex="grid-column: span 2;">=</button>
               </div>
               <div class="row">
                 <div class="col-md-12">
